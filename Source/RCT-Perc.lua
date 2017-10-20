@@ -21,8 +21,8 @@ collectgarbage()
 -- Locals for the application
 local label, sens, sensid, senspa, mini, maxi, id, param
 local label2, sens2, sensid2, senspa2, mini2, maxi2, id2, param2 
-local telem, telemVal, alarm, asce, limit, enalm, dec1, dec2
-local telem2, telemVal2, alarm2, asce2, limit2, enalm2
+local telem, telemVal, sensVal, alarm, asce, limit, enalm, dec1, dec2, ensensVal
+local telem2, telemVal2, sensVal2, alarm2, asce2, limit2, enalm2, ensensVal2
 local result, result2, tvalue, tvalue2, limit, limit2
 local sensorLalist = {"..."}
 local sensorLalist2 = {"..."}
@@ -32,6 +32,8 @@ local sensorPalist = {"..."}
 local sensorPalist2 = {"..."}
 local enalarmlist = {}
 local enalarmlist2 = {}
+local ensensVallist = {}
+local ensensVallist2 = {}
 local ascelist = {}
 local ascelist2 = {}
 ----------------------------------------------------------------------
@@ -57,30 +59,79 @@ for i,sensor in ipairs(sensors) do
 		table.insert(sensorPalist2, string.format("%s", sensor.param))
 	end
 end
+-- Add system sensors
+sensors = system.getTxTelemetry()
+table.insert(sensorLalist, string.format("Rx1 Voltage"))
+table.insert(sensorIdlist, string.format("rx1"))
+table.insert(sensorPalist, string.format("%s", 0))
+table.insert(sensorLalist, string.format("Rx2 Voltage"))
+table.insert(sensorIdlist, string.format("rx2"))
+table.insert(sensorPalist, string.format("%s", 0))
+table.insert(sensorLalist, string.format("RxB Voltage"))
+table.insert(sensorIdlist, string.format("rxb"))
+table.insert(sensorPalist, string.format("%s", 0))
+
+table.insert(sensorLalist2, string.format("Rx1 Voltage"))
+table.insert(sensorIdlist2, string.format("rx1"))
+table.insert(sensorPalist2, string.format("%s", 0))
+table.insert(sensorLalist2, string.format("Rx2 Voltage"))
+table.insert(sensorIdlist2, string.format("rx2"))
+table.insert(sensorPalist2, string.format("%s", 0))
+table.insert(sensorLalist2, string.format("RxB Voltage"))
+table.insert(sensorIdlist2, string.format("rxb"))
+table.insert(sensorPalist2, string.format("%s", 0))
 ----------------------------------------------------------------------
 -- Draw the telemetry windows
-local function printTelemetry()
-	if (telemVal == "-") then
-		lcd.drawText(145 - lcd.getTextWidth(FONT_MAXI,"-"),10,"-",FONT_MAXI)
-		lcd.drawText(145 - lcd.getTextWidth(FONT_MINI,"RC-Thoughts.com"),54,"RC-Thoughts.com",FONT_MINI)
-		lcd.drawImage(1,51, ":graph")
-		else
-		lcd.drawText(145 - lcd.getTextWidth(FONT_MAXI,string.format("%s%%", telemVal)),10,string.format("%s%%", telemVal),FONT_MAXI)
-		lcd.drawText(145 - lcd.getTextWidth(FONT_MINI,"RC-Thoughts.com"),54,"RC-Thoughts.com",FONT_MINI)
-		lcd.drawImage(1,51, ":graph")
-	end
+local function printTelemetry(width, height)
+    if(height>60)then
+        if (telemVal == "-") then
+            lcd.drawText(145 - lcd.getTextWidth(FONT_MAXI,"-"),10,"-",FONT_MAXI)
+            else
+            lcd.drawText(145 - lcd.getTextWidth(FONT_MAXI,string.format("%s%%", telemVal)),10,string.format("%s%%", telemVal),FONT_MAXI)
+        end
+        if(ensensVal == 1)then
+            lcd.drawText(145 - lcd.getTextWidth(FONT_MINI,"RC-Thoughts.com"),54,"RC-Thoughts.com",FONT_MINI)
+            lcd.drawImage(1,51, ":graph")
+            else
+            if (telemVal == "-") then
+                lcd.drawText(145 - lcd.getTextWidth(FONT_BOLD,"-"),50,"-",FONT_BOLD)
+                else
+                lcd.drawText(145 - lcd.getTextWidth(FONT_BOLD,string.format("%s", sensVal)),50,string.format("%s", sensVal),FONT_BOLD)
+            end
+        end
+    else
+        if (telemVal == "-") then
+            lcd.drawText(145 - lcd.getTextWidth(FONT_BIG,"-"),1,"-",FONT_BIG)
+            else
+            lcd.drawText(145 - lcd.getTextWidth(FONT_BIG,string.format("%s%%", telemVal)),1,string.format("%s%%", telemVal),FONT_BIG)
+        end
+    end
 end
 
-local function printTelemetry2()
-	if (telemVal2 == "-") then
-		lcd.drawText(145 - lcd.getTextWidth(FONT_MAXI,"-"),10,"-",FONT_MAXI)
-		lcd.drawText(145 - lcd.getTextWidth(FONT_MINI,"RC-Thoughts.com"),54,"RC-Thoughts.com",FONT_MINI)
-		lcd.drawImage(1,51, ":graph")
-		else
-		lcd.drawText(145 - lcd.getTextWidth(FONT_MAXI,string.format("%s%%", telemVal2)),10,string.format("%s%%", telemVal2),FONT_MAXI)
-		lcd.drawText(145 - lcd.getTextWidth(FONT_MINI,"RC-Thoughts.com"),54,"RC-Thoughts.com",FONT_MINI)
-		lcd.drawImage(1,51, ":graph")
-	end
+local function printTelemetry2(width, height)
+    if(height>60)then
+        if (telemVal2 == "-") then
+            lcd.drawText(145 - lcd.getTextWidth(FONT_MAXI,"-"),10,"-",FONT_MAXI)
+            else
+            lcd.drawText(145 - lcd.getTextWidth(FONT_MAXI,string.format("%s%%", telemVal2)),10,string.format("%s%%", telemVal2),FONT_MAXI)
+        end
+        if(ensensVal2 == 1)then
+            lcd.drawText(145 - lcd.getTextWidth(FONT_MINI,"RC-Thoughts.com"),54,"RC-Thoughts.com",FONT_MINI)
+            lcd.drawImage(1,51, ":graph")
+            else
+            if (telemVal2 == "-") then
+                lcd.drawText(145 - lcd.getTextWidth(FONT_BOLD,"-"),50,"-",FONT_BOLD)
+                else
+                lcd.drawText(145 - lcd.getTextWidth(FONT_BOLD,string.format("%s", sensVal2)),50,string.format("%s", sensVal2),FONT_BOLD)
+            end
+        end
+    else
+        if (telemVal2 == "-") then
+            lcd.drawText(145 - lcd.getTextWidth(FONT_BIG,"-"),1,"-",FONT_BIG)
+            else
+            lcd.drawText(145 - lcd.getTextWidth(FONT_BIG,string.format("%s%%", telemVal2)),1,string.format("%s%%", telemVal2),FONT_BIG)
+        end
+    end
 end
 ----------------------------------------------------------------------
 -- Store settings when changed by user
@@ -219,6 +270,16 @@ local function enalmChanged(value)
 	enalm=value
 	system.pSave("enalm",value)
 end
+
+local function ensensValChanged(value)
+	ensensVal=value
+	system.pSave("ensensVal",value)
+end
+
+local function ensensValChanged2(value)
+	ensensVal2=value
+	system.pSave("ensensVal2",value)
+end
 ----------------------------------------------------------------------
 -- Draw the main form (Application inteface)
 local function initForm(subform)
@@ -254,6 +315,10 @@ local function initForm(subform)
 		form.addRow(2)
 		form.addLabel({label=trans2.sensHigh})
 		form.addIntbox(maxi,0,32767,0,dec1,1,maxiChanged)
+        
+        form.addRow(2)
+		form.addLabel({label=trans2.sensValue})
+		form.addSelectbox(ensensVallist,ensensVal,false,ensensValChanged)
 		
 		form.addRow(1)
 		form.addLabel({label=trans2.almTxt1,font=FONT_BOLD})
@@ -309,6 +374,10 @@ local function initForm(subform)
 			form.addRow(2)
 			form.addLabel({label=trans2.sensHigh})
 			form.addIntbox(maxi2,0,32767,0,dec2,1,maxiChanged2)
+            
+            form.addRow(2)
+            form.addLabel({label=trans2.sensValue})
+            form.addSelectbox(ensensVallist2,ensensVal2,false,ensensValChanged2)
 			
 			form.addRow(1)
 			form.addLabel({label=trans2.almTxt2,font=FONT_BOLD})
@@ -353,8 +422,26 @@ end
 ----------------------------------------------------------------------
 -- Runtime functions, read sensor, convert to percentage, keep percentage between 0 and 100 at all times
 local function loop()
-	local sensor = system.getSensorByID(id, param)
+    local sensor = {}
+    local sensorTx = system.getTxTelemetry()
+    if(id == "rx1") then
+        sensor.valid = true
+        sensor.value = sensorTx.rx1Voltage
+        sensor.unit = "V"
+    elseif(id == "rx2") then
+        sensor.valid = true
+        sensor.value = sensorTx.rx2Voltage
+        sensor.unit = "V"
+    elseif(id == "rxb") then
+        sensor.valid = true
+        sensor.value = sensorTx.rxBVoltage
+        sensor.unit = "V"
+    else
+        sensor = system.getSensorByID(id, param)
+    end
+
 	if(sensor and sensor.valid) then
+        sensVal = string.format("%.2f %s", sensor.value, sensor.unit)
 		if(dec1 == 1) then
 			sensor.value = (sensor.value*10)
 			else
@@ -410,8 +497,22 @@ local function loop()
 	end
 	
 	-- Take care of percentage 2
-	local sensor = system.getSensorByID(id2, param2)
+    local sensor = {}
+    local sensorTx = system.getTxTelemetry()
+    if(id2 == "rx1") then
+        sensor.valid = true
+        sensor.value = sensorTx.rx1Voltage
+    elseif(id2 == "rx2") then
+        sensor.valid = true
+        sensor.value = sensorTx.rx2Voltage
+    elseif(id2 == "rxb") then
+        sensor.valid = true
+        sensor.value = sensorTx.rxBVoltage
+    else
+        sensor = system.getSensorByID(id2, param)
+    end
 	if(sensor and sensor.valid) then
+        sensVal2 = string.format("%.2f %s", sensor.value, sensor.unit)
 		if(dec2 == 1) then
 			sensor.value = (sensor.value*10)
 			else
@@ -491,6 +592,8 @@ local function init()
 	asce2 = system.pLoad("asce2",1)
 	enalm = system.pLoad("enalm",1)
 	enalm2 = system.pLoad("enalm2",1)
+    ensensVal = system.pLoad("ensensVal",1)
+    ensensVal2 = system.pLoad("ensensVal2",1)
 	id = system.pLoad("id",0)
 	id2 = system.pLoad("id2",0)
 	param = system.pLoad("param",0)
@@ -503,12 +606,16 @@ local function init()
 	table.insert(enalarmlist,trans2.pos)
 	table.insert(enalarmlist2,trans2.neg)
 	table.insert(enalarmlist2,trans2.pos)
+    table.insert(ensensVallist,trans2.neg)
+	table.insert(ensensVallist,trans2.pos)
+    table.insert(ensensVallist2,trans2.neg)
+	table.insert(ensensVallist2,trans2.pos)
 	table.insert(ascelist,trans2.neg)
 	table.insert(ascelist,trans2.pos)
 	table.insert(ascelist2,trans2.neg)
 	table.insert(ascelist2,trans2.pos)
-	system.registerTelemetry(1,label,2,printTelemetry)
-	system.registerTelemetry(2,label2,2,printTelemetry2)
+	system.registerTelemetry(1,label,0,printTelemetry)
+	system.registerTelemetry(2,label2,0,printTelemetry2)
 	system.registerControl(1,trans2.control1,trans2.cl1)
 	system.registerControl(2,trans2.control2,trans2.cl2)
     collectgarbage()
