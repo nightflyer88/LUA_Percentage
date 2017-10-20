@@ -48,42 +48,44 @@ local function setLanguage()
 end
 ----------------------------------------------------------------------
 -- Read available sensors for user to select
-local sensors = system.getSensors()
-for i,sensor in ipairs(sensors) do
-	if (sensor.label ~= "") then
-		table.insert(sensorLalist, string.format("%s", sensor.label))
-		table.insert(sensorIdlist, string.format("%s", sensor.id))
-		table.insert(sensorPalist, string.format("%s", sensor.param))
-		table.insert(sensorLalist2, string.format("%s", sensor.label))
-		table.insert(sensorIdlist2, string.format("%s", sensor.id))
-		table.insert(sensorPalist2, string.format("%s", sensor.param))
-	end
-end
--- Add system sensors
-sensors = system.getTxTelemetry()
-table.insert(sensorLalist, string.format("Rx1 Voltage"))
-table.insert(sensorIdlist, string.format("rx1"))
-table.insert(sensorPalist, string.format("%s", 0))
-table.insert(sensorLalist, string.format("Rx2 Voltage"))
-table.insert(sensorIdlist, string.format("rx2"))
-table.insert(sensorPalist, string.format("%s", 0))
-table.insert(sensorLalist, string.format("RxB Voltage"))
-table.insert(sensorIdlist, string.format("rxb"))
-table.insert(sensorPalist, string.format("%s", 0))
+local function setSensor()
+    local sensors = system.getSensors()
+    for i,sensor in ipairs(sensors) do
+        if (sensor.label ~= "") then
+            table.insert(sensorLalist, string.format("%s", sensor.label))
+            table.insert(sensorIdlist, string.format("%s", sensor.id))
+            table.insert(sensorPalist, string.format("%s", sensor.param))
+            table.insert(sensorLalist2, string.format("%s", sensor.label))
+            table.insert(sensorIdlist2, string.format("%s", sensor.id))
+            table.insert(sensorPalist2, string.format("%s", sensor.param))
+        end
+    end
+    -- Add system sensors
+    sensors = system.getTxTelemetry()
+    table.insert(sensorLalist, trans2.sensorRx1)
+    table.insert(sensorIdlist, string.format("rx1"))
+    table.insert(sensorPalist, string.format("%s", 0))
+    table.insert(sensorLalist, trans2.sensorRx2)
+    table.insert(sensorIdlist, string.format("rx2"))
+    table.insert(sensorPalist, string.format("%s", 0))
+    table.insert(sensorLalist, trans2.sensorRxB)
+    table.insert(sensorIdlist, string.format("rxb"))
+    table.insert(sensorPalist, string.format("%s", 0))
 
-table.insert(sensorLalist2, string.format("Rx1 Voltage"))
-table.insert(sensorIdlist2, string.format("rx1"))
-table.insert(sensorPalist2, string.format("%s", 0))
-table.insert(sensorLalist2, string.format("Rx2 Voltage"))
-table.insert(sensorIdlist2, string.format("rx2"))
-table.insert(sensorPalist2, string.format("%s", 0))
-table.insert(sensorLalist2, string.format("RxB Voltage"))
-table.insert(sensorIdlist2, string.format("rxb"))
-table.insert(sensorPalist2, string.format("%s", 0))
+    table.insert(sensorLalist2, trans2.sensorRx1)
+    table.insert(sensorIdlist2, string.format("rx1"))
+    table.insert(sensorPalist2, string.format("%s", 0))
+    table.insert(sensorLalist2, trans2.sensorRx2)
+    table.insert(sensorIdlist2, string.format("rx2"))
+    table.insert(sensorPalist2, string.format("%s", 0))
+    table.insert(sensorLalist2, trans2.sensorRxB)
+    table.insert(sensorIdlist2, string.format("rxb"))
+    table.insert(sensorPalist2, string.format("%s", 0))
+end
 ----------------------------------------------------------------------
 -- Draw the telemetry windows
 local function printTelemetry(width, height)
-    if(height>60)then
+    if(height==69)then
         if (telemVal == "-") then
             lcd.drawText(145 - lcd.getTextWidth(FONT_MAXI,"-"),10,"-",FONT_MAXI)
             else
@@ -109,7 +111,7 @@ local function printTelemetry(width, height)
 end
 
 local function printTelemetry2(width, height)
-    if(height>60)then
+    if(height==69)then
         if (telemVal2 == "-") then
             lcd.drawText(145 - lcd.getTextWidth(FONT_MAXI,"-"),10,"-",FONT_MAXI)
             else
@@ -621,7 +623,8 @@ local function init()
     collectgarbage()
 end
 ----------------------------------------------------------------------
-percVersion = "v.2.4"
+percVersion = "v.2.5"
 setLanguage()
+setSensor()
 collectgarbage()
-return {init=init, loop=loop, author="RC-Thoughts", version="2.1", name=trans2.appName} 
+return {init=init, loop=loop, author="RC-Thoughts", version="2.5", name=trans2.appName} 
